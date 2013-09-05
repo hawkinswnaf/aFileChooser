@@ -16,6 +16,8 @@
 
 package com.ipaulpro.afilechooser;
 
+import java.io.File;
+
 import android.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -32,9 +34,10 @@ import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.Toast;
-
-import java.io.File;
 
 /**
  * Main Activity that handles the FileListFragments 
@@ -61,6 +64,7 @@ public class FileChooserActivity extends FragmentActivity implements
 			finishWithResult(null);
 		}
 	};
+	private Button mSelectButton;
 	
 	private String mPath;
 	
@@ -80,6 +84,13 @@ public class FileChooserActivity extends FragmentActivity implements
 			mPath = savedInstanceState.getString(PATH);
 		}
 
+		mSelectButton = (Button)findViewById(R.id.select_button);
+		mSelectButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				finishWithResult(new File(mPath));
+			}
+		});
 		setTitle(mPath);
 	}
 
@@ -183,7 +194,7 @@ public class FileChooserActivity extends FragmentActivity implements
 			finish();
 		}
 	}
-	
+
 	/**
 	 * Called when the user selects a File
 	 * 
@@ -193,9 +204,10 @@ public class FileChooserActivity extends FragmentActivity implements
 		if (file != null) {
 			if (file.isDirectory()) {
 				replaceFragment(file);
-			} else {
-				finishWithResult(file);	
 			}
+			/*
+			 * Do not let the user select a file.
+			 */
 		} else {
 			Toast.makeText(FileChooserActivity.this, R.string.error_selecting_file, Toast.LENGTH_SHORT).show();
 		}
